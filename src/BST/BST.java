@@ -1,6 +1,7 @@
 package BST;
 
 import CommonUtils.Node;
+import sun.awt.image.ImageWatched;
 
 import java.util.LinkedList;
 
@@ -8,7 +9,7 @@ import java.util.LinkedList;
  * Created by chyvn on 25-09-2016.
  */
 public class BST {
-    private Node root;
+    public Node root;
 
     void insert(int data) {
         if (root == null) {
@@ -56,7 +57,7 @@ public class BST {
             if (root.left == null)
                 return root.right;
             else if (root.right == null)
-                return  root.left;
+                return root.left;
 
             //I have two children
             //replace my value with my successor, and delete him.
@@ -126,16 +127,71 @@ public class BST {
     }
 
     private LinkedList getLinked(LinkedList list, Node node, int index) {
-        LinkedList dataList = (LinkedList)list.get(index);
+        LinkedList dataList = (LinkedList) list.get(index);
         if (dataList == null) {
             dataList = new LinkedList();
             dataList.add(0, node.data);
-        }
-        else {
+        } else {
             dataList.add(dataList.size() + 1, node.data);
         }
         getLinked(list, node.left, index++);
         getLinked(list, node.right, index++);
         return list;
     }
+
+    void printTree(Node root) {
+        LinkedList<LinkedList<Integer>> tree = new LinkedList<>();
+        LinkedList<Integer> levelList = new LinkedList<>();
+        int[][] treeArray = new int[20][20];
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 20; j++) {
+                treeArray[i][j] = -1;
+            }
+        }
+
+        treeArray = buildTreeArray(treeArray, root, 0);
+        System.out.println("This is the output of Array list");
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 20 && treeArray[i][j] != -1; j++) {
+                System.out.print(treeArray[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    /*Failed implementation using linked list of linked list. for showing a tree.
+    * Must have failed to understand the way linked lists work in linking items.
+    *
+    *
+    * TODO : revisit this, and try to implement.
+    * */
+    LinkedList<LinkedList<Integer>> buildTree(LinkedList<LinkedList<Integer>> tree, int levelIndex, LinkedList<Integer> levelList, Node root) {
+        if (levelList == null) levelList = new LinkedList<>();
+        levelList.add(levelList.size(), root.data);
+        LinkedList<Integer> tempList = tree.get(levelIndex);
+        tree.add(levelIndex, levelList);
+        System.out.println("Inserting node " + root.data + "at level Index" + levelIndex);
+        LinkedList<Integer> childLevel = new LinkedList<>();
+        ++levelIndex;
+        if (root.left != null) tree = buildTree(tree, levelIndex, childLevel, root.left);
+        if (root.right != null) tree = buildTree(tree, levelIndex, childLevel, root.right);
+        return tree;
+    }
+
+    int[][] buildTreeArray(int[][] treeArray, Node root, int levelIndex) {
+        int lastIndex = 0;
+        for (int i = 0; i < 20; i++) {
+            if (treeArray[levelIndex][i] == -1) {
+                lastIndex = i;
+                break;
+            }
+        }
+        treeArray[levelIndex][lastIndex] = root.data;
+        ++levelIndex;
+        if (root.left != null) treeArray = buildTreeArray(treeArray, root.left, levelIndex);
+        if (root.right != null) treeArray = buildTreeArray(treeArray, root.right, levelIndex);
+        return treeArray;
+    }
+
+
 }
